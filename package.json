@@ -1,0 +1,20 @@
+{
+  "name": "faras-supplements",
+  "version": "1.0.0",
+  "description": "FARAS - Premium Fitness & Muscle Building Supplements E-commerce",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": ["fitness", "supplements", "e-commerce"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
