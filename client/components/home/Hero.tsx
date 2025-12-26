@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-dark to-dark-light">
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gray-100">
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -19,7 +19,7 @@ export default function Hero() {
             className="text-center lg:text-left"
           >
             <motion.h1
-              className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent"
+              className="text-5xl md:text-7xl font-bold mb-6 text-gray-900"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
@@ -36,7 +36,7 @@ export default function Hero() {
             </motion.h1>
             
             <motion.p
-              className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl"
+              className="text-xl md:text-2xl text-gray-700 mb-12 max-w-2xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.8 }}
@@ -75,7 +75,7 @@ export default function Hero() {
           >
             <div className="relative w-full h-[500px] lg:h-[600px] rounded-lg overflow-hidden border border-dark-lighter shadow-2xl">
               <Image
-                src="/homephoto.png"
+                src="/gymer.png"
                 alt="FARAS Fitness Supplements"
                 fill
                 className="object-cover"

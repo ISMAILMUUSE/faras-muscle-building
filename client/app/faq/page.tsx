@@ -44,7 +44,7 @@ export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <main className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,8 +53,8 @@ export default function FAQPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Frequently Asked Questions</h1>
-            <p className="text-xl text-gray-400">Find answers to common questions about FARAS supplements</p>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
+            <p className="text-xl text-gray-600">Find answers to common questions about FARAS supplements</p>
           </motion.div>
 
           <div className="space-y-4">
@@ -64,15 +64,15 @@ export default function FAQPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-dark-light rounded-lg border border-dark-lighter overflow-hidden"
+                className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm"
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-dark-lighter transition-colors"
+                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                 >
-                  <span className="text-lg font-semibold text-white">{faq.question}</span>
+                  <span className="text-lg font-semibold text-gray-900">{faq.question}</span>
                   <svg
-                    className={`w-5 h-5 text-gray-400 transition-transform ${
+                    className={`w-5 h-5 text-gray-600 transition-transform ${
                       openIndex === index ? 'rotate-180' : ''
                     }`}
                     fill="none"
@@ -90,7 +90,7 @@ export default function FAQPage() {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 py-4 text-gray-300 leading-relaxed">
+                      <div className="px-6 py-4 text-gray-700 leading-relaxed">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -104,10 +104,10 @@ export default function FAQPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="mt-12 bg-dark-light rounded-lg p-8 border border-primary/30 text-center"
+            className="mt-12 bg-gray-50 rounded-lg p-8 border border-primary/20 text-center"
           >
-            <h2 className="text-2xl font-bold text-white mb-4">Still have questions?</h2>
-            <p className="text-gray-300 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Still have questions?</h2>
+            <p className="text-gray-700 mb-6">
               Our customer service team is here to help. Contact us and we'll get back to you as soon as possible.
             </p>
             <a

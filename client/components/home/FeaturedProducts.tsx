@@ -32,16 +32,16 @@ export default function FeaturedProducts() {
 
   if (loading) {
     return (
-      <section className="py-20 bg-dark-light">
+      <section className="py-20 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-gray-400">Loading products...</div>
+          <div className="text-center text-gray-900">Loading products...</div>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-20 bg-dark-light">
+    <section className="py-20 bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -50,10 +50,10 @@ export default function FeaturedProducts() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
             Featured Products
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-900 text-lg max-w-2xl mx-auto">
             Our most popular supplements, trusted by athletes worldwide
           </p>
         </motion.div>
@@ -68,8 +68,8 @@ export default function FeaturedProducts() {
               transition={{ delay: index * 0.1, duration: 0.6 }}
             >
               <Link href={`/products/${product.slug}`}>
-                <div className="bg-dark rounded-lg overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all transform hover:scale-105 border border-dark-lighter">
-                  <div className="aspect-square bg-dark-lighter relative">
+                <div className="bg-white rounded-lg overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all transform hover:scale-105 border border-gray-200 shadow-sm">
+                  <div className="aspect-square bg-gray-50 relative">
                     {product.images && product.images[0] ? (
                       <img
                         src={product.images[0].startsWith('http') ? product.images[0] : `http://localhost:5000${product.images[0]}`}
@@ -88,12 +88,12 @@ export default function FeaturedProducts() {
                     )}
                   </div>
                   <div className="p-6">
-                    <p className="text-primary text-sm font-semibold mb-2">{product.category}</p>
-                    <h3 className="text-xl font-bold text-white mb-2">{product.name}</h3>
+                    <p className="text-gray-900 text-sm font-semibold mb-2">{product.category}</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{product.name}</h3>
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl font-bold text-white">${product.price}</span>
+                      <span className="text-2xl font-bold text-gray-900">${product.price}</span>
                       {product.comparePrice && (
-                        <span className="text-gray-500 line-through">${product.comparePrice}</span>
+                        <span className="text-gray-900 line-through opacity-60">${product.comparePrice}</span>
                       )}
                     </div>
                   </div>

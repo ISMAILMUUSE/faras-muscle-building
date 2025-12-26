@@ -37,10 +37,10 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark">
+      <div className="min-h-screen bg-white">
         <Navbar />
         <div className="flex items-center justify-center py-20">
-          <div className="text-gray-400">Loading post...</div>
+          <div className="text-gray-600">Loading post...</div>
         </div>
         <Footer />
       </div>
@@ -49,10 +49,10 @@ export default function BlogPostPage() {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-dark">
+      <div className="min-h-screen bg-white">
         <Navbar />
         <div className="flex items-center justify-center py-20">
-          <div className="text-gray-400">Post not found</div>
+          <div className="text-gray-600">Post not found</div>
         </div>
         <Footer />
       </div>
@@ -64,25 +64,25 @@ export default function BlogPostPage() {
     const lines = content.split('\n');
     return lines.map((line, index) => {
       if (line.startsWith('# ')) {
-        return <h1 key={index} className="text-3xl font-bold text-white mt-8 mb-4">{line.substring(2)}</h1>;
+        return <h1 key={index} className="text-3xl font-bold text-gray-900 mt-8 mb-4">{line.substring(2)}</h1>;
       } else if (line.startsWith('## ')) {
-        return <h2 key={index} className="text-2xl font-bold text-white mt-6 mb-3">{line.substring(3)}</h2>;
+        return <h2 key={index} className="text-2xl font-bold text-gray-900 mt-6 mb-3">{line.substring(3)}</h2>;
       } else if (line.startsWith('### ')) {
-        return <h3 key={index} className="text-xl font-bold text-white mt-4 mb-2">{line.substring(4)}</h3>;
+        return <h3 key={index} className="text-xl font-bold text-gray-900 mt-4 mb-2">{line.substring(4)}</h3>;
       } else if (line.startsWith('- ') || line.startsWith('* ')) {
-        return <li key={index} className="text-gray-300 ml-6 mb-2">{line.substring(2)}</li>;
+        return <li key={index} className="text-gray-700 ml-6 mb-2">{line.substring(2)}</li>;
       } else if (line.startsWith('**') && line.endsWith('**')) {
-        return <p key={index} className="text-white font-semibold my-4">{line.substring(2, line.length - 2)}</p>;
+        return <p key={index} className="text-gray-900 font-semibold my-4">{line.substring(2, line.length - 2)}</p>;
       } else if (line.trim() === '') {
         return <br key={index} />;
       } else {
-        return <p key={index} className="text-gray-300 mb-4 leading-relaxed">{line}</p>;
+        return <p key={index} className="text-gray-700 mb-4 leading-relaxed">{line}</p>;
       }
     });
   };
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <main className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -91,7 +91,7 @@ export default function BlogPostPage() {
             animate={{ opacity: 1, y: 0 }}
           >
             {post.image && (
-              <div className="aspect-video bg-dark-lighter rounded-lg overflow-hidden mb-8">
+              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden mb-8">
                 <img
                   src={post.image.startsWith('http') ? post.image : `http://localhost:5000${post.image}`}
                   alt={post.title}
@@ -102,8 +102,8 @@ export default function BlogPostPage() {
 
             <div className="mb-8">
               <span className="text-primary font-semibold">{post.category}</span>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mt-4 mb-4">{post.title}</h1>
-              <div className="flex items-center gap-4 text-gray-400">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-4 mb-4">{post.title}</h1>
+              <div className="flex items-center gap-4 text-gray-600">
                 <span>By {post.author}</span>
                 <span>•</span>
                 <span>{new Date(post.createdAt).toLocaleDateString()}</span>
@@ -112,7 +112,7 @@ export default function BlogPostPage() {
               </div>
             </div>
 
-            <div className="prose prose-invert max-w-none">
+            <div className="prose max-w-none">
               {renderContent(post.content)}
             </div>
           </motion.article>

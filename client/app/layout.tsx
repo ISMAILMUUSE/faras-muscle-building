@@ -3,9 +3,9 @@ import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
-  title: 'FARAS - Premium Fitness & Muscle Building Supplements',
-  description: 'Build Strength. Fuel Performance. Premium supplements for fitness enthusiasts and athletes.',
-  keywords: 'fitness supplements, protein, creatine, pre-workout, muscle building, strength training',
+  title: 'FARAS NUTRITION - Premium Muscle Building Supplements',
+  description: 'Fuel Your Strength. Build Your Power. Premium muscle building supplements.',
+  keywords: 'fitness supplements, protein, creatine, pre-workout, muscle building, strength training, KES',
 };
 
 export default function RootLayout({

@@ -35,7 +35,7 @@ export default function OrderConfirmationPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark">
+      <div className="min-h-screen bg-white">
         <Navbar />
         <div className="flex items-center justify-center py-20">
           <div className="text-gray-400">Loading...</div>
@@ -47,7 +47,7 @@ export default function OrderConfirmationPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-dark">
+      <div className="min-h-screen bg-white">
         <Navbar />
         <div className="flex items-center justify-center py-20">
           <div className="text-gray-400">Order not found</div>
@@ -58,7 +58,7 @@ export default function OrderConfirmationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <main className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

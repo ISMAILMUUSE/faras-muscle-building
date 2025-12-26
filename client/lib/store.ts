@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface CartItem {
   product: string;
@@ -83,6 +83,7 @@ export const useStore = create<Store>()(
     }),
     {
       name: 'faras-store',
+      storage: typeof window !== 'undefined' ? createJSONStorage(() => localStorage) : undefined,
     }
   )
 );

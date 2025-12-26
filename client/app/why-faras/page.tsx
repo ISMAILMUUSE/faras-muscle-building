@@ -40,7 +40,7 @@ const reasons = [
 
 export default function WhyFarasPage() {
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <main className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,8 +49,8 @@ export default function WhyFarasPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Why Choose FARAS?</h1>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Why Choose FARAS?</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               We're not just another supplement company. We're committed to excellence, 
               quality, and helping you achieve your fitness goals.
             </p>
@@ -63,11 +63,11 @@ export default function WhyFarasPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-dark-light rounded-lg p-6 border border-dark-lighter hover:border-primary transition-all"
+                className="bg-white rounded-lg p-6 border border-gray-200 hover:border-primary transition-all shadow-sm"
               >
                 <div className="text-4xl mb-4">{reason.icon}</div>
-                <h2 className="text-xl font-bold text-white mb-3">{reason.title}</h2>
-                <p className="text-gray-400">{reason.description}</p>
+                <h2 className="text-xl font-bold text-gray-900 mb-3">{reason.title}</h2>
+                <p className="text-gray-600">{reason.description}</p>
               </motion.div>
             ))}
           </div>
@@ -76,10 +76,10 @@ export default function WhyFarasPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-lg p-8 border border-primary/30 text-center"
+            className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-8 border border-primary/20 text-center"
           >
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Experience the Difference?</h2>
-            <p className="text-gray-300 mb-6 text-lg">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Experience the Difference?</h2>
+            <p className="text-gray-700 mb-6 text-lg">
               Join thousands of satisfied customers who trust FARAS for their fitness journey.
             </p>
             <Link

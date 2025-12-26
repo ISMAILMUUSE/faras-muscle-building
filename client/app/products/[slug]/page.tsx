@@ -60,10 +60,10 @@ export default function ProductPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark">
+      <div className="min-h-screen bg-white">
         <Navbar />
         <div className="flex items-center justify-center py-20">
-          <div className="text-gray-400">Loading product...</div>
+          <div className="text-gray-600">Loading product...</div>
         </div>
         <Footer />
       </div>
@@ -72,10 +72,10 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-dark">
+      <div className="min-h-screen bg-white">
         <Navbar />
         <div className="flex items-center justify-center py-20">
-          <div className="text-gray-400">Product not found</div>
+          <div className="text-gray-600">Product not found</div>
         </div>
         <Footer />
       </div>
@@ -83,17 +83,17 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <main className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Images */}
             <div>
-              <div className="aspect-square bg-dark-light rounded-lg overflow-hidden mb-4 border border-dark-lighter">
+              <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-4 border border-gray-200">
                 {product.images && product.images[selectedImage] ? (
                   <img
-                    src={product.images[selectedImage].startsWith('http') ? product.images[selectedImage] : `http://localhost:5000${product.images[selectedImage]}`}
+                    src={product.images[selectedImage].startsWith('http') ? product.images[selectedImage] : product.images[selectedImage].startsWith('/uploads') ? `http://localhost:5000${product.images[selectedImage]}` : product.images[selectedImage]}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
@@ -110,7 +110,7 @@ export default function ProductPage() {
                       key={index}
                       onClick={() => setSelectedImage(index)}
                       className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                        selectedImage === index ? 'border-primary' : 'border-dark-lighter'
+                        selectedImage === index ? 'border-primary' : 'border-gray-300'
                       }`}
                     >
                       <img
@@ -127,23 +127,23 @@ export default function ProductPage() {
             {/* Product Info */}
             <div>
               <p className="text-primary font-semibold mb-2">{product.category}</p>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{product.name}</h1>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{product.name}</h1>
               
               {/* Rating */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
-                    <span key={i} className={`text-xl ${i < Math.floor(product.rating) ? 'text-primary' : 'text-gray-600'}`}>
+                    <span key={i} className={`text-xl ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}>
                       ★
                     </span>
                   ))}
                 </div>
-                <span className="text-gray-400">({product.numReviews} reviews)</span>
+                <span className="text-gray-600">({product.numReviews} reviews)</span>
               </div>
 
               {/* Price */}
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-4xl font-bold text-white">${product.price}</span>
+                <span className="text-4xl font-bold text-gray-900">${product.price}</span>
                 {product.comparePrice && (
                   <>
                     <span className="text-2xl text-gray-500 line-through">${product.comparePrice}</span>
@@ -155,7 +155,7 @@ export default function ProductPage() {
               </div>
 
               {/* Description */}
-              <p className="text-gray-300 mb-6 text-lg">{product.description}</p>
+              <p className="text-gray-700 mb-6 text-lg">{product.description}</p>
 
               {/* Stock Status */}
               <div className="mb-6">
@@ -169,18 +169,18 @@ export default function ProductPage() {
               {/* Quantity & Add to Cart */}
               <div className="mb-8">
                 <div className="flex items-center gap-4 mb-4">
-                  <label className="text-white font-semibold">Quantity:</label>
+                  <label className="text-gray-900 font-semibold">Quantity:</label>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 bg-dark-light border border-dark-lighter rounded-lg text-white hover:bg-dark-lighter"
+                      className="w-10 h-10 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50"
                     >
                       -
                     </button>
-                    <span className="w-16 text-center text-white font-semibold">{quantity}</span>
+                    <span className="w-16 text-center text-gray-900 font-semibold">{quantity}</span>
                     <button
                       onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}
-                      className="w-10 h-10 bg-dark-light border border-dark-lighter rounded-lg text-white hover:bg-dark-lighter"
+                      className="w-10 h-10 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-gray-50"
                     >
                       +
                     </button>
@@ -196,8 +196,8 @@ export default function ProductPage() {
               </div>
 
               {/* Disclaimer */}
-              <div className="bg-dark-light border border-yellow-500/30 rounded-lg p-4 mb-8">
-                <p className="text-yellow-400 text-sm">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
+                <p className="text-yellow-800 text-sm">
                   ⚠️ These products are not intended to diagnose, treat, cure, or prevent any disease. 
                   Always consult a healthcare professional before use.
                 </p>
@@ -207,7 +207,7 @@ export default function ProductPage() {
 
           {/* Product Details Tabs */}
           <div className="mt-16">
-            <div className="border-b border-dark-lighter mb-8">
+            <div className="border-b border-gray-200 mb-8">
               <div className="flex gap-8">
                 <button className="pb-4 border-b-2 border-primary text-primary font-semibold">
                   Benefits
@@ -218,12 +218,12 @@ export default function ProductPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Benefits */}
               <div>
-                <h2 className="text-2xl font-bold text-white mb-4">Benefits</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Benefits</h2>
                 <ul className="space-y-3">
                   {product.benefits.map((benefit, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="text-primary mt-1">✓</span>
-                      <span className="text-gray-300">{benefit}</span>
+                      <span className="text-gray-700">{benefit}</span>
                     </li>
                   ))}
                 </ul>
@@ -231,10 +231,10 @@ export default function ProductPage() {
 
               {/* Ingredients */}
               <div>
-                <h2 className="text-2xl font-bold text-white mb-4">Ingredients</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Ingredients</h2>
                 <ul className="space-y-2">
                   {product.ingredients.map((ingredient, index) => (
-                    <li key={index} className="text-gray-300">• {ingredient}</li>
+                    <li key={index} className="text-gray-700">• {ingredient}</li>
                   ))}
                 </ul>
               </div>
@@ -242,14 +242,14 @@ export default function ProductPage() {
 
             {/* How to Use */}
             <div className="mt-12">
-              <h2 className="text-2xl font-bold text-white mb-4">How to Use</h2>
-              <p className="text-gray-300 text-lg">{product.howToUse}</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Use</h2>
+              <p className="text-gray-700 text-lg">{product.howToUse}</p>
             </div>
 
             {/* Warnings */}
-            <div className="mt-12 bg-dark-light border border-red-500/30 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">Warnings</h2>
-              <p className="text-gray-300">{product.warnings}</p>
+            <div className="mt-12 bg-red-50 border border-red-200 rounded-lg p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Warnings</h2>
+              <p className="text-gray-700">{product.warnings}</p>
             </div>
           </div>
         </div>
