@@ -5,14 +5,22 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useStore } from '@/lib/store';
+import { formatKES } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, clearCart } = useStore();
   const subtotal = getCartTotal();
-  const shipping = subtotal > 100 ? 0 : 10;
+  const shipping = subtotal > 2500 ? 0 : 250;
   const tax = subtotal * 0.1;
   const total = subtotal + shipping + tax;
+
+  const getImageUrl = (path: string) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    if (path.startsWith('/uploads')) return `http://localhost:5000${path}`;
+    return path;
+  };
 
   if (cart.length === 0) {
     return (
@@ -55,9 +63,9 @@ export default function CartPage() {
                   <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                     {item.image ? (
                       <img
-                        src={item.image.startsWith('http') ? item.image : `http://localhost:5000${item.image}`}
+                        src={getImageUrl(item.image)}
                         alt={item.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -67,7 +75,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{item.name}</h3>
-                    <p className="text-xl font-bold text-primary mb-4">${item.price}</p>
+                    <p className="text-xl font-bold text-primary mb-4">{formatKES(item.price)}</p>
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2">
                         <button
@@ -96,7 +104,7 @@ export default function CartPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-xl font-bold text-gray-900">{formatKES(item.price * item.quantity)}</p>
                   </div>
                 </motion.div>
               ))}
@@ -118,24 +126,24 @@ export default function CartPage() {
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-gray-700">
                     <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>{formatKES(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                    <span>{shipping === 0 ? 'Free' : formatKES(shipping)}</span>
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>{formatKES(tax)}</span>
                   </div>
                   <div className="border-t border-gray-300 pt-4 flex justify-between text-xl font-bold text-gray-900">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>{formatKES(total)}</span>
                   </div>
                 </div>
-                {subtotal < 100 && (
+                {subtotal < 2500 && (
                   <p className="text-primary text-sm mb-6">
-                    Add ${(100 - subtotal).toFixed(2)} more for free shipping!
+                    Add {formatKES(2500 - subtotal)} more for free shipping!
                   </p>
                 )}
                 <Link

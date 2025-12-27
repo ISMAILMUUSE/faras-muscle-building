@@ -8,21 +8,40 @@ import { useStore } from '@/lib/store';
 import Cookies from 'js-cookie';
 import { authAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
-import Logo from './Logo';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { user, setUser, getCartItemCount } = useStore();
   const cartCount = getCartItemCount();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Sync search query with URL when on shop page
+  useEffect(() => {
+    if (pathname === '/shop') {
+      const params = new URLSearchParams(window.location.search);
+      const searchParam = params.get('search') || '';
+      setSearchQuery(searchParam);
+    } else {
+      setSearchQuery('');
+    }
+  }, [pathname]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+    const trimmedQuery = searchQuery.trim();
+    if (trimmedQuery) {
+      router.push(`/shop?search=${encodeURIComponent(trimmedQuery)}`);
+    } else if (pathname === '/shop') {
+      // Clear search if on shop page and empty query
+      router.push('/shop');
     }
   };
 
@@ -87,11 +106,22 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3">
-              <Logo className="h-12 w-12" />
+            <Link href="/" className="flex items-center gap-4 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/10 rounded-full blur-lg group-hover:blur-xl transition-all opacity-0 group-hover:opacity-100"></div>
+                <img 
+                  src="/logo.png" 
+                  alt="FARAS NUTRITION Logo" 
+                  className="h-16 w-16 object-contain relative z-10 transition-transform group-hover:scale-105 drop-shadow-lg"
+                />
+              </div>
               <div className="flex flex-col">
-                <span className="text-3xl font-bold text-primary">FARAS NUTRITION</span>
-                <span className="text-xs text-gray-600">Fuel Your Strength. Build Your Power.</span>
+                <span className="text-3xl font-bold text-primary group-hover:text-primary-dark transition-colors">
+                  FARAS NUTRITION
+                </span>
+                <span className="text-xs text-gray-600 group-hover:text-gray-700 transition-colors">
+                  Fuel Your Strength. Build Your Power.
+                </span>
               </div>
             </Link>
 
@@ -175,7 +205,7 @@ export default function Navbar() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 <span className="text-xs mt-1">Cart</span>
-                {cartCount > 0 && (
+                {mounted && cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {cartCount}
                   </span>

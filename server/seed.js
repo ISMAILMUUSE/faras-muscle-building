@@ -6,15 +6,24 @@ import Blog from './models/Blog.js';
 
 dotenv.config();
 
+// Helper function to generate slug
+const generateSlug = (name) => {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
+// Only the 10 specified products with KES pricing
 const products = [
   {
-    name: 'Whey Protein',
-    description: 'Premium whey protein isolate for maximum muscle recovery and growth. Fast-absorbing formula with 25g of protein per serving.',
+    name: 'Whey Protein Powder',
+    slug: generateSlug('Whey Protein Powder'),
+    description: 'Fast-absorbing protein that supports muscle repair and lean muscle growth.',
     benefits: [
-      'Supports muscle recovery',
-      'Promotes muscle growth',
-      'Fast absorption',
-      'High-quality protein source'
+      'Supports muscle growth',
+      'Speeds up recovery',
+      'Helps meet daily protein intake'
     ],
     ingredients: [
       'Whey Protein Isolate',
@@ -22,12 +31,11 @@ const products = [
       'Stevia',
       'Cocoa Powder'
     ],
-    howToUse: 'Mix one scoop (30g) with 8-10 oz of cold water or milk. Consume within 30 minutes after your workout or as a meal replacement.',
+    howToUse: 'Mix 1 scoop with water or milk after workouts.',
     warnings: 'Consult a healthcare professional before use if you are pregnant, nursing, or have a medical condition. Not intended for individuals under 18.',
     category: 'Protein',
-    price: 49.99,
-    comparePrice: 59.99,
-    images: ['/images/whey-protein.jpg'], // Place image in client/public/images/
+    price: 7250, // Average of KES 6,500-8,000
+    images: ['/whey.png'],
     inStock: true,
     stockQuantity: 50,
     featured: true,
@@ -35,92 +43,13 @@ const products = [
     numReviews: 127,
   },
   {
-    name: 'Creatine Monohydrate',
-    description: 'Pure creatine monohydrate powder to enhance strength, power, and muscle mass. The most researched supplement in sports nutrition.',
-    benefits: [
-      'Increases strength and power',
-      'Supports muscle mass gains',
-      'Improves exercise performance',
-      'Enhances recovery'
-    ],
-    ingredients: [
-      'Creatine Monohydrate (100% Pure)'
-    ],
-    howToUse: 'Loading phase: Take 20g per day (4 servings of 5g) for 5-7 days. Maintenance: Take 5g per day mixed with water or your favorite beverage.',
-    warnings: 'Stay hydrated while using creatine. Consult a healthcare professional before use if you have kidney issues.',
-    category: 'Creatine',
-    price: 24.99,
-    comparePrice: 29.99,
-    images: ['/images/creatine.jpg'],
-    inStock: true,
-    stockQuantity: 75,
-    featured: true,
-    rating: 4.9,
-    numReviews: 203,
-  },
-  {
-    name: 'Pre-Workout',
-    description: 'Powerful pre-workout formula designed to boost energy, focus, and endurance. Get the most out of every training session.',
-    benefits: [
-      'Increased energy and focus',
-      'Enhanced endurance',
-      'Improved workout performance',
-      'Better muscle pumps'
-    ],
-    ingredients: [
-      'Caffeine Anhydrous',
-      'Beta-Alanine',
-      'Citrulline Malate',
-      'Betaine Anhydrous',
-      'Taurine'
-    ],
-    howToUse: 'Mix one scoop with 8-10 oz of cold water 20-30 minutes before your workout. Do not exceed one serving per day.',
-    warnings: 'Contains caffeine. Not recommended for individuals sensitive to caffeine or those under 18. Do not use if pregnant or nursing.',
-    category: 'Pre-Workout',
-    price: 39.99,
-    comparePrice: 49.99,
-    images: ['/images/pre-workout.jpg'],
-    inStock: true,
-    stockQuantity: 40,
-    featured: true,
-    rating: 4.7,
-    numReviews: 156,
-  },
-  {
-    name: 'BCAA',
-    description: 'Branched-chain amino acids to support muscle recovery and reduce fatigue. Perfect for training days and recovery.',
-    benefits: [
-      'Reduces muscle fatigue',
-      'Supports muscle recovery',
-      'Preserves muscle mass',
-      'Enhances endurance'
-    ],
-    ingredients: [
-      'L-Leucine',
-      'L-Isoleucine',
-      'L-Valine',
-      'Natural Flavors'
-    ],
-    howToUse: 'Mix one scoop (10g) with 8-10 oz of water. Take during or after your workout, or between meals.',
-    warnings: 'Consult a healthcare professional before use if you have a medical condition.',
-    category: 'BCAA',
-    price: 29.99,
-    comparePrice: 34.99,
-    images: ['/images/bcaa.jpg'],
-    inStock: true,
-    stockQuantity: 60,
-    featured: false,
-    rating: 4.6,
-    numReviews: 98,
-  },
-  {
     name: 'Mass Gainer',
-    description: 'High-calorie mass gainer with quality protein and complex carbs. Perfect for hardgainers looking to build size and strength.',
+    slug: generateSlug('Mass Gainer'),
+    description: 'High-calorie blend for hard gainers to increase size and mass.',
     benefits: [
-      'Supports weight gain',
-      'High-quality calories',
-      'Muscle building support',
-      'Post-workout recovery'
+      'High-calorie intake',
+      'Increases body weight',
+      'Supports muscle size'
     ],
     ingredients: [
       'Whey Protein Concentrate',
@@ -129,51 +58,234 @@ const products = [
       'Natural Flavors',
       'Vitamins & Minerals'
     ],
-    howToUse: 'Mix 2 scoops (150g) with 16 oz of water or milk. Take 1-2 times per day, preferably post-workout or between meals.',
+    howToUse: '1–2 servings daily between meals or post-workout.',
     warnings: 'Not intended for weight reduction. Consult a healthcare professional before use.',
-    category: 'Mass Gainer',
-    price: 54.99,
-    comparePrice: 64.99,
-    images: ['/images/mass-gainer.jpg'],
+    category: 'Protein',
+    price: 8500, // Average of KES 7,500-9,500 (3kg)
+    images: ['/massgainer.jpg'],
     inStock: true,
     stockQuantity: 30,
-    featured: false,
-    rating: 4.5,
-    numReviews: 87,
+    featured: true,
+    rating: 4.7,
+    numReviews: 95,
   },
   {
-    name: 'Recovery Supplement',
-    description: 'Comprehensive recovery formula with essential nutrients to support muscle repair and reduce soreness after intense training.',
+    name: 'Creatine Monohydrate',
+    slug: generateSlug('Creatine Monohydrate'),
+    description: 'Improves strength, power, and workout performance.',
     benefits: [
-      'Faster muscle recovery',
-      'Reduces muscle soreness',
-      'Supports immune function',
-      'Enhances sleep quality'
+      'Increases strength',
+      'Improves muscle fullness',
+      'Enhances workout performance'
     ],
     ingredients: [
-      'L-Glutamine',
-      'Magnesium',
-      'Zinc',
-      'Vitamin D',
-      'Tart Cherry Extract'
+      'Creatine Monohydrate (100% Pure)'
     ],
-    howToUse: 'Take 2 capsules with water after your workout or before bed. Best taken on an empty stomach.',
-    warnings: 'Consult a healthcare professional before use if you are taking medications or have a medical condition.',
+    howToUse: '5g daily with water.',
+    warnings: 'Stay hydrated while using creatine. Consult a healthcare professional before use if you have kidney issues.',
+    category: 'Strength',
+    price: 3500, // Average of KES 3,000-4,000 (300g)
+    images: ['/creating.webp'],
+    inStock: true,
+    stockQuantity: 75,
+    featured: true,
+    rating: 4.9,
+    numReviews: 203,
+  },
+  {
+    name: 'BCAA',
+    slug: generateSlug('BCAA'),
+    description: 'Reduces muscle breakdown and soreness.',
+    benefits: [
+      'Reduces muscle soreness',
+      'Prevents muscle loss',
+      'Improves endurance'
+    ],
+    ingredients: [
+      'L-Leucine',
+      'L-Isoleucine',
+      'L-Valine',
+      'Natural Flavors'
+    ],
+    howToUse: 'Before or during workouts.',
+    warnings: 'Consult a healthcare professional before use if you have a medical condition.',
     category: 'Recovery',
-    price: 34.99,
-    comparePrice: 39.99,
-    images: ['/images/recovery.jpg'],
+    price: 4250, // Average of KES 3,500-5,000 (300g)
+    images: ['/BCAA.jpg'],
+    inStock: true,
+    stockQuantity: 60,
+    featured: false,
+    rating: 4.6,
+    numReviews: 98,
+  },
+  {
+    name: 'Pre-Workout',
+    slug: generateSlug('Pre-Workout'),
+    description: 'Boosts energy, endurance, and focus.',
+    benefits: [
+      'Increased energy',
+      'Better focus',
+      'Improved endurance'
+    ],
+    ingredients: [
+      'Caffeine Anhydrous',
+      'Beta-Alanine',
+      'Citrulline Malate',
+      'Betaine Anhydrous',
+      'Taurine'
+    ],
+    howToUse: 'Take 20–30 minutes before training.',
+    warnings: 'Contains caffeine. Not recommended for individuals sensitive to caffeine or those under 18. Do not use if pregnant or nursing.',
+    category: 'Strength',
+    price: 5250, // Average of KES 4,000-6,500 (300g)
+    images: ['/pre-workout.webp'],
+    inStock: true,
+    stockQuantity: 40,
+    featured: true,
+    rating: 4.7,
+    numReviews: 156,
+  },
+  {
+    name: 'Post-Workout Recovery',
+    slug: generateSlug('Post-Workout Recovery'),
+    description: 'Protein, carbs, and electrolytes for fast recovery.',
+    benefits: [
+      'Faster recovery',
+      'Reduces muscle soreness',
+      'Replenishes nutrients'
+    ],
+    ingredients: [
+      'Whey Protein',
+      'Dextrose',
+      'Electrolytes',
+      'BCAAs',
+      'Glutamine'
+    ],
+    howToUse: 'Immediately after workouts.',
+    warnings: 'Consult a healthcare professional before use if you have a medical condition.',
+    category: 'Recovery',
+    price: 6500, // Average of KES 5,500-7,500 (1kg)
+    images: ['/post-workout.jpg'],
     inStock: true,
     stockQuantity: 45,
     featured: false,
     rating: 4.6,
     numReviews: 112,
   },
+  {
+    name: 'Casein Protein',
+    slug: generateSlug('Casein Protein'),
+    description: 'Slow-digesting protein for overnight muscle repair.',
+    benefits: [
+      'Prevents muscle breakdown',
+      'Supports night recovery',
+      'Ideal before sleep'
+    ],
+    ingredients: [
+      'Micellar Casein',
+      'Natural Flavors',
+      'Stevia',
+      'Cocoa Powder'
+    ],
+    howToUse: '1 scoop before bed.',
+    warnings: 'Consult a healthcare professional before use if you are pregnant, nursing, or have a medical condition.',
+    category: 'Protein',
+    price: 8000, // Average of KES 7,000-9,000 (1kg)
+    images: ['/casein.png'],
+    inStock: true,
+    stockQuantity: 35,
+    featured: false,
+    rating: 4.5,
+    numReviews: 89,
+  },
+  {
+    name: 'Testosterone Support',
+    slug: generateSlug('Testosterone Support'),
+    description: 'Supports natural testosterone and strength.',
+    benefits: [
+      'Supports strength',
+      'Improves recovery',
+      'Boosts energy levels'
+    ],
+    ingredients: [
+      'Zinc',
+      'Magnesium',
+      'Vitamin D',
+      'Tribulus Terrestris',
+      'Fenugreek Extract',
+      'D-Aspartic Acid'
+    ],
+    howToUse: 'Once daily with meals.',
+    warnings: 'Consult a healthcare professional before use, especially if you have hormonal conditions or are taking medications.',
+    category: 'Strength',
+    price: 4500, // Average of KES 3,500-5,500 (60 capsules)
+    images: ['/testtosteronw.webp'],
+    inStock: true,
+    stockQuantity: 55,
+    featured: false,
+    rating: 4.4,
+    numReviews: 76,
+  },
+  {
+    name: 'Omega-3 Fish Oil',
+    slug: generateSlug('Omega-3 Fish Oil'),
+    description: 'Supports joints, reduces inflammation.',
+    benefits: [
+      'Reduces soreness',
+      'Supports joint mobility',
+      'Improves heart health'
+    ],
+    ingredients: [
+      'Fish Oil',
+      'EPA',
+      'DHA',
+      'Vitamin E'
+    ],
+    howToUse: '1–2 capsules daily.',
+    warnings: 'Consult a healthcare professional before use if you are taking blood-thinning medications or have bleeding disorders.',
+    category: 'Vitamins',
+    price: 3250, // Average of KES 2,500-4,000 (120 capsules)
+    images: ['/omega.webp'],
+    inStock: true,
+    stockQuantity: 80,
+    featured: false,
+    rating: 4.6,
+    numReviews: 134,
+  },
+  {
+    name: 'Multivitamins',
+    slug: generateSlug('Multivitamins'),
+    description: 'Supports immunity, metabolism, and muscle function.',
+    benefits: [
+      'Prevents deficiencies',
+      'Supports metabolism',
+      'Improves training performance'
+    ],
+    ingredients: [
+      'Vitamin A',
+      'Vitamin C',
+      'Vitamin D',
+      'Vitamin E',
+      'B-Complex Vitamins',
+      'Minerals (Zinc, Magnesium, Iron)'
+    ],
+    howToUse: '1 tablet daily.',
+    warnings: 'Do not exceed recommended dosage. Consult a healthcare professional before use if you are taking other medications.',
+    category: 'Vitamins',
+    price: 3250, // Average of KES 2,500-4,000 (90 tablets)
+    images: ['/multivitamins.webp'],
+    inStock: true,
+    stockQuantity: 100,
+    featured: false,
+    rating: 4.5,
+    numReviews: 167,
+  },
 ];
 
 const blogPosts = [
   {
     title: 'The Ultimate Guide to Protein Timing for Muscle Growth',
+    slug: generateSlug('The Ultimate Guide to Protein Timing for Muscle Growth'),
     excerpt: 'Learn when and how to consume protein for optimal muscle recovery and growth. Science-backed strategies for athletes.',
     content: `# The Ultimate Guide to Protein Timing for Muscle Growth
 
@@ -204,12 +316,13 @@ For active individuals:
 - Stay consistent with your protein intake
 
 Remember, consistency is key. Focus on meeting your daily protein goals rather than obsessing over exact timing.`,
-    author: 'FARAS Team',
+    author: 'FARAS NUTRITION Team',
     category: 'Nutrition',
     published: true,
   },
   {
     title: 'Creatine: Everything You Need to Know',
+    slug: generateSlug('Creatine: Everything You Need to Know'),
     excerpt: 'Discover the science behind creatine supplementation and how it can enhance your strength and muscle gains.',
     content: `# Creatine: Everything You Need to Know
 
@@ -244,12 +357,13 @@ Creatine is safe for healthy individuals when used as directed. Stay well-hydrat
 ## Bottom Line
 
 Creatine monohydrate is the gold standard. It's affordable, effective, and safe. If you're serious about building strength and muscle, creatine should be in your supplement stack.`,
-    author: 'FARAS Team',
+    author: 'FARAS NUTRITION Team',
     category: 'Supplements',
     published: true,
   },
   {
     title: '5 Essential Recovery Strategies for Athletes',
+    slug: generateSlug('5 Essential Recovery Strategies for Athletes'),
     excerpt: 'Maximize your recovery between workouts with these proven strategies for better performance and faster results.',
     content: `# 5 Essential Recovery Strategies for Athletes
 
@@ -293,7 +407,7 @@ Consider these recovery supplements:
 ## The Bottom Line
 
 Recovery isn't passive. Be intentional about your recovery strategies, and you'll see better results from your training.`,
-    author: 'FARAS Team',
+    author: 'FARAS NUTRITION Team',
     category: 'Recovery',
     published: true,
   },
@@ -319,8 +433,28 @@ const seedDatabase = async () => {
     console.log('✅ Admin user created');
 
     // Create products
+    try {
     const createdProducts = await Product.insertMany(products);
     console.log(`✅ Created ${createdProducts.length} products`);
+      if (createdProducts.length > 0) {
+        console.log('Sample product:', createdProducts[0].name);
+      }
+    } catch (error) {
+      console.error('❌ Error creating products:', error.message);
+      if (error.errors) {
+        console.error('Validation errors:', JSON.stringify(error.errors, null, 2));
+      }
+      // Try creating products one by one to see which one fails
+      console.log('Attempting to create products one by one...');
+      for (const product of products) {
+        try {
+          const created = await Product.create(product);
+          console.log(`✅ Created: ${created.name}`);
+        } catch (err) {
+          console.error(`❌ Failed to create ${product.name}:`, err.message);
+        }
+      }
+    }
 
     // Create blog posts
     const createdPosts = await Blog.insertMany(blogPosts);
@@ -335,4 +469,3 @@ const seedDatabase = async () => {
 };
 
 seedDatabase();
-

@@ -1,7 +1,5 @@
 'use client';
 
-'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadStripe } from '@stripe/stripe-js';
@@ -9,6 +7,7 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useStore } from '@/lib/store';
+import { formatKES } from '@/lib/utils';
 import { ordersAPI, stripeAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
@@ -30,7 +29,7 @@ function CheckoutForm() {
   });
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 100 ? 0 : 10;
+  const shipping = subtotal > 2500 ? 0 : 250;
   const tax = subtotal * 0.1;
   const total = subtotal + shipping + tax;
 
@@ -175,19 +174,19 @@ function CheckoutForm() {
         <div className="space-y-2 mb-4">
           <div className="flex justify-between text-gray-300">
             <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>{formatKES(subtotal)}</span>
           </div>
           <div className="flex justify-between text-gray-300">
             <span>Shipping</span>
-            <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+            <span>{shipping === 0 ? 'Free' : formatKES(shipping)}</span>
           </div>
           <div className="flex justify-between text-gray-300">
             <span>Tax</span>
-            <span>${tax.toFixed(2)}</span>
+            <span>{formatKES(tax)}</span>
           </div>
           <div className="border-t border-dark-lighter pt-2 flex justify-between text-xl font-bold text-white">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span>{formatKES(total)}</span>
           </div>
         </div>
         <button
@@ -195,7 +194,7 @@ function CheckoutForm() {
           disabled={!stripe || loading}
           className="w-full py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+          {loading ? 'Processing...' : `Pay ${formatKES(total)}`}
         </button>
       </div>
     </form>

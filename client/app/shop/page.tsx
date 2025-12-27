@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -22,7 +22,7 @@ interface Product {
   description?: string;
 }
 
-export default function ShopPage() {
+function ShopPageContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const [products, setProducts] = useState<Product[]>([]);
@@ -34,28 +34,87 @@ export default function ShopPage() {
 
   const categories = ['Protein', 'Strength', 'Recovery', 'Vitamins'];
 
+  // Log search query changes
   useEffect(() => {
-    const params: any = {};
-    if (searchQuery) {
-      params.search = searchQuery;
-    }
+    console.log('Search query changed:', searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setLoading(true);
+    console.log('Loading products, search query:', searchQuery);
     
-    productsAPI.getAll(params)
-      .then((res) => {
-        console.log('Products loaded:', res.data);
-        if (res.data && Array.isArray(res.data)) {
-          setProducts(res.data);
-          setFilteredProducts(res.data);
-        } else {
-          console.error('Invalid products data:', res.data);
-          setProducts([]);
-          setFilteredProducts([]);
+    // Load all products
+    productsAPI.getAll()
+      .then((response) => {
+        // Handle axios response structure - axios wraps the response in .data
+        const data = response?.data;
+        console.log('API Response object:', response);
+        console.log('API Response.data:', data);
+        console.log('Is array?', Array.isArray(data));
+        
+        let allProducts: Product[] = [];
+        
+        // Handle different response structures
+        if (Array.isArray(data)) {
+          allProducts = data;
+        } else if (data && typeof data === 'object' && !Array.isArray(data)) {
+          // If it's an object, try to find an array property
+          const arrayValue = Object.values(data).find(val => Array.isArray(val));
+          if (arrayValue) {
+            allProducts = arrayValue as Product[];
+          }
         }
+        
+        console.log('Total products loaded:', allProducts.length);
+        if (allProducts.length > 0) {
+          console.log('Sample product:', allProducts[0]);
+          console.log('All product names:', allProducts.map(p => p.name));
+        } else {
+          console.warn('No products found in database!');
+        }
+        
+        // Apply search filter client-side
+        let filtered = allProducts;
+        if (searchQuery && searchQuery.trim()) {
+          const query = searchQuery.toLowerCase().trim();
+          console.log('Applying search filter for:', query);
+          
+          filtered = allProducts.filter((p) => {
+            const name = (p.name || '').toLowerCase();
+            const desc = (p.description || '').toLowerCase();
+            const cat = (p.category || '').toLowerCase();
+            const slug = (p.slug || '').toLowerCase();
+            
+            const nameMatch = name.includes(query);
+            const descMatch = desc.includes(query);
+            const catMatch = cat.includes(query);
+            const slugMatch = slug.includes(query);
+            
+            const matches = nameMatch || descMatch || catMatch || slugMatch;
+            if (matches) {
+              console.log(`✓ Match: "${p.name}" (matched in: ${nameMatch ? 'name' : ''} ${descMatch ? 'desc' : ''} ${catMatch ? 'cat' : ''} ${slugMatch ? 'slug' : ''})`);
+            }
+            return matches;
+          });
+          
+          console.log(`Search results: ${filtered.length} products found for "${searchQuery}"`);
+          if (filtered.length === 0 && allProducts.length > 0) {
+            console.log('No matches found. Available products:', allProducts.map(p => p.name).join(', '));
+          }
+        } else {
+          console.log('No search query, showing all products');
+        }
+        
+        setProducts(allProducts);
+        setFilteredProducts(filtered);
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error loading products:', error);
-        console.error('Error details:', error.response?.data || error.message);
+        console.error('❌ Error loading products:', error);
+        console.error('Error response:', error.response);
+        console.error('Error data:', error.response?.data);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
         setProducts([]);
         setFilteredProducts([]);
         setLoading(false);
@@ -106,16 +165,7 @@ export default function ShopPage() {
   useEffect(() => {
     let filtered = [...products];
 
-    // Apply search filter (if not already filtered by API)
-    if (searchQuery && !searchQuery.includes('search=')) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(query) ||
-        p.description?.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query)
-      );
-    }
-
+    // Apply category filter
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(p => selectedCategories.includes(p.category));
     }
@@ -132,7 +182,7 @@ export default function ShopPage() {
     }
 
     setFilteredProducts(filtered);
-  }, [selectedCategories, sortBy, products, searchQuery]);
+  }, [selectedCategories, sortBy, products]);
 
   const handleCategoryToggle = (category: string) => {
     setSelectedCategories(prev =>
@@ -219,6 +269,377 @@ export default function ShopPage() {
                 </div>
               </div>
 
+              {/* Featured Products Section */}
+              {!searchQuery && (
+                <div className="mb-12">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-8">Featured Products</h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {/* Mass Gainer */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/massgainer.jpg"
+                          alt="Mass Gainer"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Protein
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Mass Gainer</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Weight & muscle gain</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          High-calorie blend for hard gainers to increase size and mass.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Prices:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1 space-y-1">
+                              <li>3kg: KES 7,500 – 9,500</li>
+                              <li>5kg: KES 11,000 – 14,500</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Protein
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('Mass Gainer', '/massgainer.jpg', 7500, 'Protein')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Creatine */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/creating.webp"
+                          alt="Creatine Monohydrate"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Strength
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Creatine Monohydrate</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Strength & power</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          Improves strength, power, and workout performance.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Prices:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1 space-y-1">
+                              <li>300g: KES 3,000 – 4,000</li>
+                              <li>500g: KES 4,500 – 6,000</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Strength
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('Creatine Monohydrate', '/creating.webp', 3000, 'Strength')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* BCAA */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/BCAA.jpg"
+                          alt="BCAA"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Recovery
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">BCAA</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Muscle recovery</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          Reduces muscle breakdown and soreness.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Price:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1">
+                              <li>300g: KES 3,500 – 5,000</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Recovery
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('BCAA', '/BCAA.jpg', 3500, 'Recovery')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Pre-Workout */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/pre-workout.webp"
+                          alt="Pre-Workout"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Strength
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Pre-Workout</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Energy & focus</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          Boosts energy, endurance, and focus.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Price:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1">
+                              <li>300g: KES 4,000 – 6,500</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Strength
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('Pre-Workout', '/pre-workout.webp', 4000, 'Strength')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Post-Workout Recovery */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/post-workout.jpg"
+                          alt="Post-Workout Recovery"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Recovery
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Post-Workout Recovery</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Muscle recovery</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          Protein, carbs, and electrolytes for fast recovery.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Price:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1">
+                              <li>1kg: KES 5,500 – 7,500</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Recovery
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('Post-Workout Recovery', '/post-workout.jpg', 5500, 'Recovery')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Casein Protein */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/casein.png"
+                          alt="Casein Protein"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Protein
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Casein Protein</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Night-time recovery</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          Slow-digesting protein for overnight muscle repair.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Price:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1">
+                              <li>1kg: KES 7,000 – 9,000</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Protein
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('Casein Protein', '/casein.png', 7000, 'Protein')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Testosterone Support */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/testtosteronw.webp"
+                          alt="Testosterone Support"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Strength
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Testosterone Support</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Hormone support</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          Supports natural testosterone and strength.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Price:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1">
+                              <li>60 capsules: KES 3,500 – 5,500</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Strength
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('Testosterone Support', '/testtosteronw.webp', 3500, 'Strength')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Omega-3 Fish Oil */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/omega.webp"
+                          alt="Omega-3 Fish Oil"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Vitamins
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Omega-3 Fish Oil</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Recovery & joint health</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          Supports joints, reduces inflammation.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Price:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1">
+                              <li>120 capsules: KES 2,500 – 4,000</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Vitamins
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('Omega-3 Fish Oil', '/omega.webp', 2500, 'Vitamins')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Multivitamins */}
+                    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
+                      <div className="relative aspect-square bg-gray-50 p-6">
+                        <img
+                          src="/multivitamins.webp"
+                          alt="Multivitamins"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="mb-2">
+                          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                            Vitamins
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Multivitamins</h3>
+                        <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Overall performance</p>
+                        <p className="text-sm text-gray-700 mb-4">
+                          Supports immunity, metabolism, and muscle function.
+                        </p>
+                        <div className="space-y-2 mb-4">
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Price:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1">
+                              <li>90 tablets: KES 2,500 – 4,000</li>
+                            </ul>
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-semibold">Category:</span> Vitamins
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleFeaturedAddToCart('Multivitamins', '/multivitamins.webp', 2500, 'Vitamins')}
+                          className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Products Grid */}
               {loading ? (
                 <div className="text-center text-gray-600 py-20">Loading products...</div>
@@ -233,380 +654,29 @@ export default function ShopPage() {
                   ))}
                 </div>
               )}
-
-              {/* Featured Products Section */}
-              <div className="mt-16 mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-8">Featured Products</h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {/* Mass Gainer */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/massgainer.jpg"
-                        alt="Mass Gainer"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Protein
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">Mass Gainer</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Weight & muscle gain</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        High-calorie blend for hard gainers to increase size and mass.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Prices:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1 space-y-1">
-                            <li>3kg: KES 7,500 – 9,500</li>
-                            <li>5kg: KES 11,000 – 14,500</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Protein
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('Mass Gainer', '/massgainer.jpg', 7500, 'Protein')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Creatine */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/creating.webp"
-                        alt="Creatine Monohydrate"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Strength
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">Creatine Monohydrate</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Strength & power</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Improves strength, power, and workout performance.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Prices:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1 space-y-1">
-                            <li>300g: KES 3,000 – 4,000</li>
-                            <li>500g: KES 4,500 – 6,000</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Strength
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('Creatine Monohydrate', '/creating.webp', 3000, 'Strength')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* BCAA */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/BCAA.jpg"
-                        alt="BCAA"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Recovery
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">BCAA</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Muscle recovery</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Reduces muscle breakdown and soreness.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Price:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1">
-                            <li>300g: KES 3,500 – 5,000</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Recovery
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('BCAA', '/BCAA.jpg', 3500, 'Recovery')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Pre-Workout */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/pre-workout.webp"
-                        alt="Pre-Workout"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Strength
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">Pre-Workout</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Energy & focus</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Boosts energy, endurance, and focus.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Price:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1">
-                            <li>300g: KES 4,000 – 6,500</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Strength
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('Pre-Workout', '/pre-workout.webp', 4000, 'Strength')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Post-Workout Recovery */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/post-workout.jpg"
-                        alt="Post-Workout Recovery"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Recovery
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">Post-Workout Recovery</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Muscle recovery</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Protein, carbs, and electrolytes for fast recovery.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Price:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1">
-                            <li>1kg: KES 5,500 – 7,500</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Recovery
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('Post-Workout Recovery', '/post-workout.jpg', 5500, 'Recovery')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Casein Protein */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/casein.png"
-                        alt="Casein Protein"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Protein
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">Casein Protein</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Night-time recovery</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Slow-digesting protein for overnight muscle repair.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Price:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1">
-                            <li>1kg: KES 7,000 – 9,000</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Protein
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('Casein Protein', '/casein.png', 7000, 'Protein')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Testosterone Support */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/testtosteronw.webp"
-                        alt="Testosterone Support"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Strength
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">Testosterone Support</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Hormone support</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Supports natural testosterone and strength.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Price:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1">
-                            <li>60 capsules: KES 3,500 – 5,500</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Strength
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('Testosterone Support', '/testtosteronw.webp', 3500, 'Strength')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Omega-3 Fish Oil */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/omega.webp"
-                        alt="Omega-3 Fish Oil"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Vitamins
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">Omega-3 Fish Oil</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Recovery & joint health</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Supports joints, reduces inflammation.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Price:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1">
-                            <li>120 capsules: KES 2,500 – 4,000</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Vitamins
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('Omega-3 Fish Oil', '/omega.webp', 2500, 'Vitamins')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Multivitamins */}
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all">
-                    <div className="relative aspect-square bg-gray-50 p-6">
-                      <img
-                        src="/multivitamins.webp"
-                        alt="Multivitamins"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2">
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                          Vitamins
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">Multivitamins</h3>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Purpose: Overall performance</p>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Supports immunity, metabolism, and muscle function.
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Price:</span>
-                          <ul className="list-disc list-inside ml-2 mt-1">
-                            <li>90 tablets: KES 2,500 – 4,000</li>
-                          </ul>
-                        </div>
-                        <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Category:</span> Vitamins
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleFeaturedAddToCart('Multivitamins', '/multivitamins.webp', 2500, 'Vitamins')}
-                        className="w-full py-2 bg-primary hover:bg-primary-dark text-white font-semibold rounded transition-all text-sm"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <main className="py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center text-gray-600 py-20">Loading...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    }>
+      <ShopPageContent />
+    </Suspense>
   );
 }

@@ -14,10 +14,10 @@ export default function ShippingPolicyPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Shipping Policy</h1>
-            <div className="text-gray-300 space-y-6 leading-relaxed">
+            <h1 className="text-4xl md:text-5xl font-bold text-teal-600 mb-8">Shipping Policy</h1>
+            <div className="text-black space-y-6 leading-relaxed">
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Shipping Methods</h2>
+                <h2 className="text-2xl font-bold text-teal-600 mb-4">Shipping Methods</h2>
                 <p>
                   We offer several shipping options to meet your needs:
                 </p>
@@ -29,7 +29,7 @@ export default function ShippingPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Processing Time</h2>
+                <h2 className="text-2xl font-bold text-teal-600 mb-4">Processing Time</h2>
                 <p>
                   Orders are typically processed within 1-2 business days. Orders placed on weekends 
                   or holidays will be processed on the next business day. You will receive a shipping 
@@ -38,7 +38,7 @@ export default function ShippingPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Shipping Locations</h2>
+                <h2 className="text-2xl font-bold text-teal-600 mb-4">Shipping Locations</h2>
                 <p>
                   We currently ship within the United States. We're working on expanding our shipping 
                   to international locations. Sign up for our newsletter to be notified when international 
@@ -47,7 +47,7 @@ export default function ShippingPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Shipping Address</h2>
+                <h2 className="text-2xl font-bold text-teal-600 mb-4">Shipping Address</h2>
                 <p>
                   Please ensure your shipping address is correct at checkout. We are not responsible for 
                   orders shipped to incorrect addresses provided by the customer. If you need to change 
@@ -56,7 +56,7 @@ export default function ShippingPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Order Tracking</h2>
+                <h2 className="text-2xl font-bold text-teal-600 mb-4">Order Tracking</h2>
                 <p>
                   Once your order ships, you'll receive a tracking number via email. You can use this 
                   number to track your package on the carrier's website. If you have any questions about 
@@ -65,7 +65,7 @@ export default function ShippingPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Delayed Shipments</h2>
+                <h2 className="text-2xl font-bold text-teal-600 mb-4">Delayed Shipments</h2>
                 <p>
                   While we strive to deliver orders on time, delays may occur due to weather, carrier 
                   issues, or other factors beyond our control. We will notify you if there are any 
@@ -74,7 +74,7 @@ export default function ShippingPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Lost or Damaged Packages</h2>
+                <h2 className="text-2xl font-bold text-teal-600 mb-4">Lost or Damaged Packages</h2>
                 <p>
                   If your package is lost or damaged during shipping, please contact us immediately. 
                   We will work with the carrier to resolve the issue and ensure you receive your order 
@@ -83,14 +83,14 @@ export default function ShippingPolicyPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Contact Us</h2>
+                <h2 className="text-2xl font-bold text-teal-600 mb-4">Contact Us</h2>
                 <p>
                   If you have any questions about shipping, please contact us at support@faras.com or 
                   call 1-800-FARAS-01.
                 </p>
               </section>
 
-              <p className="text-gray-400 text-sm mt-8">
+              <p className="text-gray-600 text-sm mt-8">
                 Last Updated: {new Date().toLocaleDateString()}
               </p>
             </div>

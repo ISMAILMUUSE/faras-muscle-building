@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "restore-images": "node restoreProductImages.js",
+    "check-db": "node checkDatabase.js"
   },
   "dependencies": {
     "express": "^4.18.2",

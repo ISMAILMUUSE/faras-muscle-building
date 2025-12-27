@@ -14,10 +14,10 @@ export default function TermsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Terms & Conditions</h1>
-            <div className="text-gray-300 space-y-6 leading-relaxed">
+            <h1 className="text-4xl md:text-5xl font-bold text-green-600 mb-8">Terms & Conditions</h1>
+            <div className="text-black space-y-6 leading-relaxed">
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">1. Acceptance of Terms</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">1. Acceptance of Terms</h2>
                 <p>
                   By accessing and using the FARAS website, you accept and agree to be bound by the terms 
                   and provision of this agreement. If you do not agree to these terms, please do not use 
@@ -26,7 +26,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">2. Use License</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">2. Use License</h2>
                 <p>
                   Permission is granted to temporarily download one copy of the materials on FARAS's website 
                   for personal, non-commercial transitory viewing only. This is the grant of a license, not 
@@ -35,7 +35,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">3. Product Information</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">3. Product Information</h2>
                 <p>
                   We strive to provide accurate product information, including descriptions, images, and 
                   pricing. However, we do not warrant that product descriptions or other content on this site 
@@ -44,7 +44,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">4. Pricing</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">4. Pricing</h2>
                 <p>
                   All prices are in USD and are subject to change without notice. We reserve the right to 
                   modify prices at any time. Prices do not include shipping and handling charges unless 
@@ -53,7 +53,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">5. Orders</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">5. Orders</h2>
                 <p>
                   When you place an order, you are making an offer to purchase products at the prices stated. 
                   We reserve the right to accept or reject any order. If we reject an order, we will notify 
@@ -62,7 +62,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">6. Payment</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">6. Payment</h2>
                 <p>
                   Payment must be received before we ship your order. We accept major credit cards and other 
                   payment methods as indicated on our website. All payments are processed securely through 
@@ -71,7 +71,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">7. Disclaimer</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">7. Disclaimer</h2>
                 <p>
                   The materials on FARAS's website are provided on an 'as is' basis. FARAS makes no warranties, 
                   expressed or implied, and hereby disclaims and negates all other warranties including, without 
@@ -81,7 +81,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">8. Limitations</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">8. Limitations</h2>
                 <p>
                   In no event shall FARAS or its suppliers be liable for any damages (including, without 
                   limitation, damages for loss of data or profit, or due to business interruption) arising 
@@ -90,7 +90,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">9. Revisions</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">9. Revisions</h2>
                 <p>
                   FARAS may revise these terms of service at any time without notice. By using this website, 
                   you are agreeing to be bound by the then current version of these terms of service.
@@ -98,14 +98,14 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">10. Contact Information</h2>
+                <h2 className="text-2xl font-bold text-green-600 mb-4">10. Contact Information</h2>
                 <p>
                   If you have any questions about these Terms & Conditions, please contact us at 
                   support@faras.com.
                 </p>
               </section>
 
-              <p className="text-gray-400 text-sm mt-8">
+              <p className="text-gray-600 text-sm mt-8">
                 Last Updated: {new Date().toLocaleDateString()}
               </p>
             </div>

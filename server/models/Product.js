@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Protein', 'Creatine', 'Pre-Workout', 'Recovery', 'BCAA', 'Mass Gainer'],
+    enum: ['Protein', 'Strength', 'Recovery', 'Vitamins'],
     required: true,
   },
   price: {
